@@ -12,6 +12,33 @@ function summarise(filename, key, _value, _path, summary) {
   }
 }
 
+function addKeyValueIndex(filename, key, value, _path, summary) {
+  summarise(filename, key, value, _path, summary);
+}
+
+function isIndexable(value) {
+  return _.isArray(value)
+  || _.isString(value)
+  || _.isNumber(value)
+  || _.isDate(value)
+  || _.isBoolean(value);
+}
+
+function appendPathWithIndex(_path, index) {
+  let _inpath = `${_path}[${index}]`
+  return _inpath;
+}
+
+function appendPathWithKey(_path, key) {
+  let inpath;
+  if (_path === '') {
+    inpath = key;
+  } else {
+    inpath = `${_path}.${key}`
+  }
+  return inpath;
+}
+
 function traverseAny(filename, _any, _path, summary) {
   if (_.isArray(_any)) {
     traverseArray(filename, _any, _path, summary);
@@ -20,16 +47,17 @@ function traverseAny(filename, _any, _path, summary) {
   } else if (_.isString(_any)) {}
 }
 
-function traverseObject(filename, _object, _path, summary) {
+
+function traverseObject(filename, _object, _path, _summary) {
   _.forIn(_object, (value, key)=> {
-    summarise(filename, key, value, _path, summary);
-  })
+    if (isIndexable( value )) {
+      addKeyValueIndex(filename, key, value, _path, _summary);
+    } else if (_.isObject(value)) {
+      traverseObject( filename, value, appendPathWithKey(_path, key), _summary);
+    }
+  });
 }
 
-function appendPathWithIndex(_path, index) {
-  let _inpath = `${_path}[${index}]`
-  return _inpath;
-}
 
 function traverseArray(filename, _array, _path, summary) {
   for(var index in _array) {
@@ -42,9 +70,9 @@ function traverseArray(filename, _array, _path, summary) {
 function traverse(filename, obj ) {
   let summary = {};
   if (_.isArray(obj)) {
-    traverseArray(filename, obj, [], summary);
+    traverseArray(filename, obj, '', summary);
   } else if ( _.isObject(obj) ) {
-    console.error(`object not supported`)
+    traverseObject(filename, obj, '', summary);
   } else {
     console.log("other");
   }

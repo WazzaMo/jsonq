@@ -79,6 +79,31 @@ describe('index-doc', ()=>{
 
     }) //-- doc is array of objects with array values
 
+    describe('where top level is an object,', ()=> {
+      let filename='object-at-top.json';
+
+      let content= {
+        first: { id: 'DEADBEEF', name: 'Fred' },
+        second: { id: 'DEADCAO', name: 'Nhat' }
+      };
+
+      let expected_index = {
+        id: { values: [
+          { value: 'DEADBEEF', path: 'first', file: filename },
+          { value: 'DEADCAO', path: 'second', file: filename }
+        ]},
+        name: { values: [
+          { value: 'Fred', path: 'first', file: filename },
+          { value: 'Nhat', path: 'second', file: filename }
+        ]}
+      };
+
+      it('must find the leaf keys,', ()=> 
+        expect( list_keys_and_path(filename, JSON.stringify(content)) ).toHaveSameItems(expected_index)
+      );
+
+    }) //-- top level is object
+
   })
 
 })
