@@ -34,7 +34,7 @@ describe('index-doc', ()=>{
 
       beforeEach( ()=> result = list_keys_and_path( filename, JSON.stringify(array_of_obj)) );
 
-      it('must return an set of keys with path', () => {
+      it('must return a set of keys with path', () => {
         expect(result).toHaveSameItems(flattened_keys);
       })
 
