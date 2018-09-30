@@ -99,13 +99,53 @@ function traverse(filename, obj ) {
   return summary;
 }
 
-function list_keys_and_path(filename, json) {
+function index_doc(filename, json) {
   let doc = JSON.parse(json);
   return traverse(filename, doc);
 }
 
+function getValues(_index, key) {
+  if (_.has(_index, key) && _.has(_index[key], VALUE_ENTRY)) {
+    return _index[key][VALUE_ENTRY];
+  }
+  return [];
+}
+
+function getBranches(_index, key) {
+  if(_.has(_index, key) && _.has(_index[key], BRANCH_ENTRY)) {
+    return _index[key][BRANCH_ENTRY];
+  }
+  return [];
+}
+
+function merge_index(_index1, _index2) {
+  let merged = {};
+  
+  let all_keys = _.concat( _.keys(_index1),_.keys(_index2 ) );
+
+  for(var key of all_keys) {
+    let values1 = getValues(_index1, key);
+    let branches1 = getBranches(_index1, key);
+    let values2 = getValues(_index2, key);
+    let branches2 = getBranches(_index2, key);
+
+    let merged_values = _.concat(values1, values2);
+    let merged_branches = _.concat(branches1, branches2);
+    merged[key] = {};
+    if (merged_values.length > 0) {
+      merged[key][VALUE_ENTRY] = merged_values;
+    }
+    if (merged_branches.length > 0) {
+      merged[key][BRANCH_ENTRY] = merged_branches;
+    }
+  }
+  return merged;
+}
+
+
 module.exports = {
-  list_keys_and_path,
+  index_doc,
+  merge_index,
   BRANCH_ENTRY,
   VALUE_ENTRY
 }
