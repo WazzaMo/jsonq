@@ -32,6 +32,9 @@ options are:
 
 *key* should be a valid key or `?` to search by value only.
 
+*value* can be a number, a floating point, a boolean value
+or a string. It can also be a full value or a value that is part of an array.
+
 ### Example
 
 ```sh
