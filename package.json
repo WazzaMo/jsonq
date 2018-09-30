@@ -1,11 +1,15 @@
 {
-  "name": "jsonsdb",
+  "name": "jsonq",
   "version": "0.1.0",
   "description": "A Searchable JSON DB System for Node",
   "main": "index.js",
   "scripts": {
     "test": "jasmine"
   },
+  "files": [
+    "src/*.js",
+    "spec/**/*.js*"
+  ],
   "keywords": [
     "searchable",
     "JSON",

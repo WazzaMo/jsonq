@@ -3,4 +3,5 @@ node_modules
 db/organizations.json
 db/tickets.json
 db/users.json
+*.tgz
 
