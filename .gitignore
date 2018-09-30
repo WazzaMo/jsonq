@@ -1,3 +1,6 @@
 
-node_modules/
+node_modules
+db/organizations.json
+db/tickets.json
+db/users.json
 
