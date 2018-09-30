@@ -15,3 +15,27 @@ This query tool will answer these questions in general:
 
 Optionally, it can also dump the object with all the peer
 keys.
+
+## Usage
+
+This is a CLI tool. Run using the `jsonq` shell script...
+
+jsonq [options] \<key\>=\<value\>
+
+Where:
+options are:
+
+|Option | Meaning |
+|-------|---------|
+| -h or --help | for help info |
+| -o or --object | to dump related object |
+
+*key* should be a valid key or `?` to search by value only.
+
+### Example
+
+```sh
+jsonq -o _id=10
+```
+Will dump the key-value information and objects found
+for those keys.
