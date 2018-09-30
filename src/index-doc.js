@@ -105,5 +105,7 @@ function list_keys_and_path(filename, json) {
 }
 
 module.exports = {
-  list_keys_and_path
+  list_keys_and_path,
+  BRANCH_ENTRY,
+  VALUE_ENTRY
 }
