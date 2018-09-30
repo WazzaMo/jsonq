@@ -1,19 +1,38 @@
 const path = require('path');
 const _ = require('lodash');
 
-function summarise(filename, key, _value, _path, summary) {
-  let item = { value: _value, path: _path, file: filename };
+const
+  BRANCH_ENTRY = 'branches',
+  VALUE_ENTRY = 'values';
 
-  if(_.has(summary, key)) {
-    let values = summary[key].values;
-    values.push( item )
+
+function ensureKeyIndexEntry(key, _summary) {
+  if (! _.has(_summary, key)) {
+    entry = _summary[key] = {};
+  }
+  return _summary[key];
+}
+
+function addKeyBranchIndex(filename, key, _object, _path, summary) {
+  let branch = { path: _path, children: _.keys(_object), file: filename };
+
+  let entry = ensureKeyIndexEntry(key, summary);
+  if (_.has(entry, BRANCH_ENTRY)) {
+    entry[BRANCH_ENTRY].push( branch );
   } else {
-    summary[key] = { values: [ item ]};
+    entry[BRANCH_ENTRY] = [ branch ];
   }
 }
 
-function addKeyValueIndex(filename, key, value, _path, summary) {
-  summarise(filename, key, value, _path, summary);
+function addKeyValueIndex(filename, key, _value, _path, summary) {
+  let item = { value: _value, path: _path, file: filename };
+
+  let entry = ensureKeyIndexEntry(key, summary);
+  if(_.has(entry, VALUE_ENTRY)) {
+    entry[VALUE_ENTRY].push( item )
+  } else {
+    entry[VALUE_ENTRY] = [ item ];
+  }
 }
 
 function isIndexable(value) {
@@ -53,6 +72,7 @@ function traverseObject(filename, _object, _path, _summary) {
     if (isIndexable( value )) {
       addKeyValueIndex(filename, key, value, _path, _summary);
     } else if (_.isObject(value)) {
+      addKeyBranchIndex(filename, key, value, _path, _summary);
       traverseObject( filename, value, appendPathWithKey(_path, key), _summary);
     }
   });
@@ -74,7 +94,7 @@ function traverse(filename, obj ) {
   } else if ( _.isObject(obj) ) {
     traverseObject(filename, obj, '', summary);
   } else {
-    console.log("other");
+    throw `Expected object or array at the top-level of JSON! Not ${JSON.stringify(obj)}`;
   }
   return summary;
 }

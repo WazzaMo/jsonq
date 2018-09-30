@@ -88,6 +88,12 @@ describe('index-doc', ()=>{
       };
 
       let expected_index = {
+        first: { branches: [
+          { path: '', children: ['id', 'name'], file: filename }
+        ]},
+        second: { branches: [
+          { path: '', children: ['id', 'name'], file: filename }
+        ]},
         id: { values: [
           { value: 'DEADBEEF', path: 'first', file: filename },
           { value: 'DEADCAO', path: 'second', file: filename }
