@@ -1,3 +1,6 @@
+// JSON Query Tool
+// (c) Copyright 2018 Warwick Molloy
+
 const crypto = require('crypto');
 
 const CLIP_LEN = 10;

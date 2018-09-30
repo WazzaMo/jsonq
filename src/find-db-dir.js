@@ -1,3 +1,6 @@
+// JSON Query Tool
+// (c) Copyright 2018 Warwick Molloy
+
 const path = require('path');
 
 const DBPATH = 'db';

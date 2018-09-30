@@ -1,3 +1,5 @@
+// JSON Query Tool
+// (c) Copyright 2018 Warwick Molloy
 
 const process = require('process');
 const _ = require('lodash');
