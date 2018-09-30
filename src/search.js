@@ -22,7 +22,7 @@ function get_key_value_entry(_index, key) {
   }
 }
 
-function find_object_by_key_value(_index, key, value) {
+function find_objects_by_key_value(_index, key, value) {
   let key_entry = get_key_value_entry(_index, key);
 
   let values = key_entry[VALUE_ENTRY];
@@ -31,7 +31,7 @@ function find_object_by_key_value(_index, key, value) {
   return obj;
 }
 
-function find_object_by_key_with_list_value(_index, key, member) {
+function find_objects_by_key_with_list_value(_index, key, member) {
   let key_entry = get_key_value_entry(_index, key);
 
   let values = key_entry[VALUE_ENTRY];
@@ -90,7 +90,7 @@ function find_objects_containing_value(_index, _value) {
 }
 
 module.exports = {
-  find_object_by_key_value,
-  find_object_by_key_with_list_value,
+  find_objects_by_key_value,
+  find_objects_by_key_with_list_value,
   find_objects_containing_value
 }

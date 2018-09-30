@@ -3,8 +3,8 @@ require('jasmine-collection-matchers')
 const { FILENAME, INDEX } = require('./complex_test_value');
 
 const {
-  find_object_by_key_value,
-  find_object_by_key_with_list_value,
+  find_objects_by_key_value,
+  find_objects_by_key_with_list_value,
   find_objects_containing_value
 } = require('../src/search');
 
@@ -16,7 +16,7 @@ describe('search:', () => {
       
       it('must throw an error', ()=>
         expect(
-          () => find_object_by_key_value(INDEX, '-missing-','no-value')
+          () => find_objects_by_key_value(INDEX, '-missing-','no-value')
         ).toThrow('Key "-missing-" does not appear in any database file.')
       );
     })
@@ -24,25 +24,25 @@ describe('search:', () => {
     describe('when simple key: value entries in JSON,', ()=> {
 
       it('must find simple bananas: "yellow"', ()=>
-        expect(find_object_by_key_value(INDEX, 'bananas', 'yellow')).toHaveSameItems(
+        expect(find_objects_by_key_value(INDEX, 'bananas', 'yellow')).toHaveSameItems(
           [{path:'[0].fruit', file:FILENAME}]
         )
       );
 
       it('must find simple vehicles: "SKU256"', ()=>
-        expect(find_object_by_key_value(INDEX, 'vehicles', 'SKU256')).toHaveSameItems(
+        expect(find_objects_by_key_value(INDEX, 'vehicles', 'SKU256')).toHaveSameItems(
           [{path: '[3]', file: FILENAME}]
         )
       );
 
       it('must find numeric value by key',() =>
-        expect(find_object_by_key_value(INDEX, 'id', 36)).toHaveSameItems(
+        expect(find_objects_by_key_value(INDEX, 'id', 36)).toHaveSameItems(
           [{ path: '[1]', file: FILENAME }]
         )
       );
 
       it('must find empty text value', ()=> 
-        expect(find_object_by_key_value(INDEX, 'description', '')).toHaveSameItems(
+        expect(find_objects_by_key_value(INDEX, 'description', '')).toHaveSameItems(
           [ { path: '[4]', file: FILENAME } ]
         )
       );
@@ -52,7 +52,7 @@ describe('search:', () => {
     describe('when key:value finds nothing', ()=> {
       
       it('must return empty array', () => 
-        expect(find_object_by_key_value(INDEX,'id', -1)).toHaveSameItems( [] )
+        expect(find_objects_by_key_value(INDEX,'id', -1)).toHaveSameItems( [] )
       );
 
     }) // when key:value finds nothing
@@ -63,12 +63,12 @@ describe('search:', () => {
     
     it('must throw exception when key not found', ()=> 
       expect(
-        () => find_object_by_key_with_list_value(INDEX, 'missing-key', 'noval')
+        () => find_objects_by_key_with_list_value(INDEX, 'missing-key', 'noval')
       ).toThrow('Key "missing-key" does not appear in any database file.')
     );
 
     it('must identify an array by one value it contains and list the full array', ()=>
-      expect(find_object_by_key_with_list_value(INDEX, 'providers', 'Coles')).toHaveSameItems([
+      expect(find_objects_by_key_with_list_value(INDEX, 'providers', 'Coles')).toHaveSameItems([
         {
           value: [ 'Coles', 'Woolworths'],
           path: '[0]',
