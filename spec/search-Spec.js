@@ -1,69 +1,107 @@
 require('jasmine-collection-matchers')
 
-const { find_object_by_key_value } = require('../src/search');
+const { FILENAME, INDEX } = require('./complex_test_value');
 
-let filename = 'array-then-nested-objects.json';
-
-let index = {
-  fruit: {
-    branches: [
-      { path: '[0]', children:['bananas', 'orange'], file: filename }
-    ],
-    values: [
-      { value: 'SKU1024', path: '[2]', file: filename }
-    ]
-  },
-  vehicles: {
-    branches: [
-      { path: '[1]', children: ['cars', 'trucks'], file: filename }
-    ],
-    values: [
-      { value: 'SKU256', path: '[3]', file: filename }
-    ]
-  },
-  bananas: {
-    values:[
-      { value: 'yellow', path: '[0].fruit', file: filename }
-    ]
-  },
-  orange: {
-    values: [
-      { value: 'orange', path: '[0].fruit', file: filename }
-    ]
-  },
-  meta: {
-    values: [
-      { value: 'stuff to eat', path: '[0]', file: filename },
-      { value: 'move from A to B', path: '[1]', file: filename }
-    ]
-  },
-  cars: {
-    values: [
-      { value: 'small', path: '[1].vehicles', file: filename }
-    ]
-  },
-  trucks: {
-    values: [
-      { value: 'big', path: '[1].vehicles', file: filename }
-    ]
-  }
-};
-
+const {
+  find_object_by_key_value,
+  find_object_by_key_with_list_value,
+  find_objects_containing_value
+} = require('../src/search');
 
 describe('search:', () => {
 
   describe('find_object_by_key_value(_index, key, value) ', () => {
 
-    describe('when simple key: value entries in JSON,', ()=> {
+    describe('when called with key that cannot be found,', () => {
       
-      it('must find a simple key=value', ()=>
-        expect(find_object_by_key_value(index, 'bananas', 'yellow')).toHaveSameItems(
-          {path:'[0].fruit', file:filename}
+      it('must throw an error', ()=>
+        expect(
+          () => find_object_by_key_value(INDEX, '-missing-','no-value')
+        ).toThrow('Key "-missing-" does not appear in any database file.')
+      );
+    })
+
+    describe('when simple key: value entries in JSON,', ()=> {
+
+      it('must find simple bananas: "yellow"', ()=>
+        expect(find_object_by_key_value(INDEX, 'bananas', 'yellow')).toHaveSameItems(
+          [{path:'[0].fruit', file:FILENAME}]
         )
       );
 
-    })
+      it('must find simple vehicles: "SKU256"', ()=>
+        expect(find_object_by_key_value(INDEX, 'vehicles', 'SKU256')).toHaveSameItems(
+          [{path: '[3]', file: FILENAME}]
+        )
+      );
 
+      it('must find numeric value by key',() =>
+        expect(find_object_by_key_value(INDEX, 'id', 36)).toHaveSameItems(
+          [{ path: '[1]', file: FILENAME }]
+        )
+      );
+
+      it('must find empty text value', ()=> 
+        expect(find_object_by_key_value(INDEX, 'description', '')).toHaveSameItems(
+          [ { path: '[4]', file: FILENAME } ]
+        )
+      );
+
+    }) // when simple key value
+
+    describe('when key:value finds nothing', ()=> {
+      
+      it('must return empty array', () => 
+        expect(find_object_by_key_value(INDEX,'id', -1)).toHaveSameItems( [] )
+      );
+
+    }) // when key:value finds nothing
+
+  }) //-- find_object_by_key_value()
+
+  describe('find_object_by_key_with_list_value()', ()=> {
+    
+    it('must throw exception when key not found', ()=> 
+      expect(
+        () => find_object_by_key_with_list_value(INDEX, 'missing-key', 'noval')
+      ).toThrow('Key "missing-key" does not appear in any database file.')
+    );
+
+    it('must identify an array by one value it contains and list the full array', ()=>
+      expect(find_object_by_key_with_list_value(INDEX, 'providers', 'Coles')).toHaveSameItems([
+        {
+          value: [ 'Coles', 'Woolworths'],
+          path: '[0]',
+          file: FILENAME
+        }
+      ])
+    );
+
+  }) //-- find_object_by_key_with_list_value()
+
+  describe('find_objects_containing_value(_index, value)',()=>{
+
+    describe('when value is a number,', ()=> {
+
+      it('must find simple match', ()=>
+        expect(find_objects_containing_value(INDEX, 35)).toHaveSameItems([
+          { key: 'id', path: '[0]', file: FILENAME }
+        ])
+      );
+
+      it('must find nested key with simple value', ()=>
+        expect(find_objects_containing_value(INDEX, 'small')).toHaveSameItems([
+          { key: 'cars', path: '[1].vehicles', file: FILENAME }
+        ])
+      );
+
+      it('must find array values by one value in the array', () =>
+        expect(find_objects_containing_value(INDEX, 'Toyota')).toHaveSameItems([
+          { key: 'providers', array: ['Toyota', 'Ford'], path: '[1]', file: FILENAME }
+        ])
+      );
+
+    })
   })
 
 })

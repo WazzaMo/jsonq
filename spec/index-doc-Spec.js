@@ -111,68 +111,10 @@ describe('index-doc', ()=>{
     }) //-- top level is object
 
     describe('where top level is array and keys link to values AND objects,', ()=>{
-      let filename = 'array-then-nested-objects.json';
-
-      let content = [
-        {
-          fruit: { bananas: 'yellow', orange: 'orange' },
-          meta: 'stuff to eat'
-        },
-        {
-          vehicles: { cars: 'small', trucks: 'big' },
-          meta: 'move from A to B'
-        },
-        { fruit: 'SKU1024'},
-        { vehicles: 'SKU256' }
-      ];
-
-      let expected_index = {
-        fruit: {
-          branches: [
-            { path: '[0]', children:['bananas', 'orange'], file: filename }
-          ],
-          values: [
-            { value: 'SKU1024', path: '[2]', file: filename }
-          ]
-        },
-        vehicles: {
-          branches: [
-            { path: '[1]', children: ['cars', 'trucks'], file: filename }
-          ],
-          values: [
-            { value: 'SKU256', path: '[3]', file: filename }
-          ]
-        },
-        bananas: {
-          values:[
-            { value: 'yellow', path: '[0].fruit', file: filename }
-          ]
-        },
-        orange: {
-          values: [
-            { value: 'orange', path: '[0].fruit', file: filename }
-          ]
-        },
-        meta: {
-          values: [
-            { value: 'stuff to eat', path: '[0]', file: filename },
-            { value: 'move from A to B', path: '[1]', file: filename }
-          ]
-        },
-        cars: {
-          values: [
-            { value: 'small', path: '[1].vehicles', file: filename }
-          ]
-        },
-        trucks: {
-          values: [
-            { value: 'big', path: '[1].vehicles', file: filename }
-          ]
-        }
-      };
+      let { CONTENT, INDEX, FILENAME } = require('./complex_test_value');
 
       it('must index branches and values', ()=>
-        expect( list_keys_and_path(filename, JSON.stringify(content))).toHaveSameItems(expected_index)
+        expect( list_keys_and_path(FILENAME, JSON.stringify(CONTENT))).toHaveSameItems(INDEX)
       );
     })
 
