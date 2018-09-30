@@ -1,4 +1,4 @@
 {
     "foo": "hi",
-    "limited": []
+    "limited": ["a"]
 }

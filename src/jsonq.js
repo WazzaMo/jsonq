@@ -17,7 +17,18 @@ const {
   find_objects_containing_value
 } = require('./search');
 
-
+function getObjectAtPath(_object, _path) {
+  if (_.isEmpty(_path)) {
+    return _object;
+  } else {
+    let part = _.at(_object, [_path]);
+    if (_.isArray(part) && part.length === 1) {
+      part = _.first(part);
+    }
+    console.log(JSON.stringify(part));
+    return part;
+  }
+}
 
 function print_results(query, results, json_data) {
   let count = 0;
@@ -29,9 +40,9 @@ function print_results(query, results, json_data) {
     jsome(outcome);
 
     if (query.objectDump) {
-      let part = _.at(json_data[outcome.file], [`${outcome.path}`]);
+      let toDump = getObjectAtPath(json_data[outcome.file], outcome.path);
       console.log(`--{ Related Values - Row #${count} }--`);
-      jsome(part[0]);
+      jsome(toDump);
       console.log('= = = = = = = = = = = = = =');
     }
   }
