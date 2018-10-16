@@ -15,7 +15,7 @@ describe('findDbDir', () => {
     describe('when db in parent dir,', () => {
       let pfs = {
         exists: (_path) => {
-          return new Promise((resolve, reject) => resolve(_path === parent_dir + '/db'))
+          return new Promise((resolve, reject) => resolve(_path === path.join(parent_dir,'db')))
         }
       };
       let result;
@@ -33,7 +33,7 @@ describe('findDbDir', () => {
       describe('and parent-of-parent has db,', () => {
         let pfs = {
           exists: (_path) => {
-            return new Promise((resolve, reject) => resolve(_path === parent_parent_dir + '/db'))
+            return new Promise((resolve, reject) => resolve(_path === path.join(parent_parent_dir, 'db') ))
           }
         }
 
@@ -63,7 +63,7 @@ describe('findDbDir', () => {
         })
 
         it('must fail via catch', () => {
-          expect(result).toBe('db was not found at ' + parent_parent_dir + '/db');
+          expect(result).toBe('db was not found at ' + path.join(parent_parent_dir, 'db') );
         })
       })
       
